@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta id="viewport" name="viewport" content="initial-scale=1.0, width=device-width, target-densitydpi=device-dpi" /><!-- this is for mobile (Android) Chrome -->
+<style type="text/css">
+	body {
+		margin:0;
+		border:none;
+	}
+	div {
+		margin:0;
+	}
+	input {
+		padding: 0;
+	}
+	
+	/*This is the div within which the signature canvas is fitted*/
+	#signature {
+		background-color:transparent;
+	}
+	#btnUndo {
+	}
+	canvas {
+			-webkit-touch-callout: none ;
+			-webkit-user-select: none ;
+			background-color:none;
+			border:none;
+	}
+</style>
+</head>
+<body>
+	
+<div id="signature"></div>
+	
+<script src="../js/sp.signature/jquery-1.7.1.js"></script>
+<script src="../js/sp.signature/jSignature.min.noconflict.js"></script>
+<script src="../js/sp.signature/jSignature.CompressorBase30.js"></script>
+<script src="../js/sp.signature/jSignature.CompressorSVG.js"></script>
+<script>
+$(document).ready(function() {
+	
+	$sigdiv = false;
+		
+	window.log = function(e){
+		try{
+			Ti.API.info(e);
+		}catch(x){
+			console.log(e);
+		}
+	};
+	
+	window.fireEvent = function(key,data) {
+		try {
+			Ti.App.fireEvent(key,data);
+		}catch(e){
+			console.log('Ignoring Ti.App.fireEvents');
+		}
+	};
+	
+	window.capture = function() {
+		var data = $sigdiv.jSignature('getData', "svg");
+		fireEvent('app:signature:capture',{ format:data[0], data:data[1] });
+	};
+	
+	window.setViewPortWidth = function(w){
+		//window.log(w);
+		if($sigdiv) {
+		  $sigdiv.jSignature('reset');
+		}
+		$('#viewport').attr('content','initial-scale=1.0, width='+w+', target-densitydpi=device-dpi');
+	};
+	
+	window.clear = function(){
+	  $sigdiv.jSignature('clear');
+	};
+	
+	window.undo = function(){
+		$sigdiv.jSignature('undo');
+		fireEvent('app:signature:undo');
+	};
+	
+	window.createSignature = function(obj) {
+    
+		$('#viewport').attr('content','initial-scale=1.0, width='+obj.width+', target-densitydpi=device-dpi');
+		
+		$sigdiv = $("#signature").jSignature({
+			'UndoButton':false,
+			'color':"#FF0000",
+			'decor-color':'#ff0000',
+			'background-color':'transparent',
+			'lineWidth':3, 
+			'width':$('body').width(),
+			'height':obj.height
+		});
+		
+		// Bind to change events
+		$("#signature").bind('change', function(e){ 
+			/* 'e.target' will refer to div with "#signature" */ 
+			if (!this.isModified) {
+				fireEvent('app:signature:modified',{});
+			}
+			this.isModified = $sigdiv.jSignature('isModified');
+			
+		});
+		
+	};
+			
+});
+</script>
+</body>
+</html>

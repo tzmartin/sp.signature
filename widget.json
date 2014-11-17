@@ -1,0 +1,13 @@
+{
+	"id": "sp.signature",
+	"name": "sp.signature",
+	"description" : "Capture signatures easy peasy lemon squeezy. Converts to SVG format. http://github.com/tzmartin/sp.signature",
+	"author": "TZ Martin martin@semanticpress.com",
+	"version": "1.0",
+	"copyright":"Copyright (c) 2014 Semantic Press, Inc.",
+	"license":"Public Domain",
+	"min-alloy-version": "1.0",
+	"min-titanium-version":"2.1",
+	"tags":"signature, svg",
+	"platforms":"android,blackberry,ios,mobileweb"
+}
